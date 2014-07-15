@@ -56,13 +56,16 @@ Let's find the source anyway
 ```rb
     # Searches for and loads Ruby source files and shared library extension
     # files. See CodeLoader.require for the rest of Kernel#require
+#NB: this is CodeLoader.require o_O
     # functionality.
     def require
       wait = false
       req = nil
 
+#NB Map of already laoded files
       reqs = CodeLoader.load_map
 
+#NB Thread-related stuff here
       Rubinius.synchronize(Lock) do
         return unless resolve_require_path
 
