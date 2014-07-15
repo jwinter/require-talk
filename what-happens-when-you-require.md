@@ -6,19 +6,18 @@ Use me to make sure that the rest are gonna look ok
 
 What happens when we require
 
-
 # require is a method
 
 irb(main):002:0> method :require
 => #<Method: Object(Kernel)#require>
 
-Kernel.require
+"Object(Kernel)#require" means that:
+- require is defined in the Kernel module 
+- and mixed into Ruby's base Object class
 
 # where does require live?
 
 2.0.0-p353 :003 > require_method = Kernel.method(:require)
- => #<Method: Kernel.require> 
-2.0.0-p353 :004 > require_method
  => #<Method: Kernel.require> 
 2.0.0-p353 :005 > require_method.source_location
  => nil 
@@ -27,18 +26,23 @@ Kernel.require
 
 :(
 
-# find the source anyway
+#
+
+Let's find the source anyway
 
 # This is what it looks like in JRuby: core/src/main/java/org/jruby/RubyKernel.java
 
 ```java
     @JRubyMethod(name = "require", module = true, visibility = PRIVATE)
     public static IRubyObject require19(ThreadContext context, IRubyObject recv, IRubyObject name, Block block) {
-        Ruby runtime = context.runtime;
+        // HEYJOE: ^ Threadcontext arg is necessary, name is the arg to require, block ain't used
+        Ruby runtime = context.runtime; //HEYJOE: runtime is like a whole Ruby VM
         IRubyObject tmp = name.checkStringType();
-        
+
+        //Normal happy path, name isn't nil
         if (!tmp.isNil()) return requireCommon(runtime, recv, tmp, block);
 
+        //handles to_path
         return requireCommon(runtime, recv, RubyFile.get_path(context, name), block);
     }
 
@@ -312,3 +316,4 @@ require_libraries(VALUE *req_list)
 
 # last slide
 
+Bye!
