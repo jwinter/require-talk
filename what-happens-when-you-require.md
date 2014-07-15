@@ -74,6 +74,7 @@ Let's find the source anyway
           wait = true
         else
           req = RequireRequest.new(@type, reqs, @load_path)
+# RequireRequest is does some of the thread sync abstraction
           reqs[@load_path] = req
           req.take!
         end
